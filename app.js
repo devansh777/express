@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const sequelize = require('./util/database');
 const Product = require('./models/product');
 const User = require('./models/user');
+const Order = require('./models/order');
+const OrderItem = require('./models/order-item');
 
 const app = express();
 app.set("view engine", 'ejs');
@@ -12,6 +14,8 @@ app.set("views", 'views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
 
 /* db.execute('select * from products').then(result => {
     console.log(result);
@@ -38,6 +42,13 @@ app.use((req,res,next)=>{
 
 Product.belongsTo(User,{constraints:true,onDelete:'CASCADE'});
 User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product,{through:CartItem});
+Product.belongsToMany(Cart,{through:CartItem});
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product,{through:OrderItem});
 
 //sequelize.sync({force:true}).then(result=>{
 sequelize.sync().then(result=>{
@@ -45,12 +56,15 @@ sequelize.sync().then(result=>{
 })
 .then(user=>{
     if(!user){
-        User.create({
+        return User.create({
             name:'devansh',
             email:'devansh@gmail.com'
         });
     }
     return user;
+})
+.then(user=>{
+    return user.createCart();
 })
 .then(user=>{
     //console.log(user);
