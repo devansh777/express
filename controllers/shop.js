@@ -47,7 +47,8 @@ exports.getIndex = (req,res,next)=>{
             'shop/product-list',{
                 prods: products,
                 pageTitle : "All Products",
-                path: "/"
+                path: "/",
+                isAuthenticated:req.isLoggenIn
             }
         );
     }).catch(err=>{

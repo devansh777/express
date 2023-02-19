@@ -14,6 +14,7 @@ app.set("views", 'views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 const Cart = require('./models/cart');
 const CartItem = require('./models/cart-item');
 
@@ -35,6 +36,7 @@ app.use((req,res,next)=>{
 app.use(express.static(path.join(__dirname,'public')));
 app.use(shopRoutes);
 app.use(adminRoutes);
+app.use(authRoutes);
 
 app.use((req,res,next)=>{
     res.status(404).send("<h1>Page Not Found</h1>");
